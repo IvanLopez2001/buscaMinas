@@ -1,0 +1,3 @@
+buscaMinas.py
+
+pause
