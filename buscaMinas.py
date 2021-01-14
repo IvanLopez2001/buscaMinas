@@ -28,11 +28,12 @@ class Controlador():
         while True:
             clock.tick(FPS)
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT: 
                     quit()
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
-                    self.celda.cambiarColor(pos, self.image)
+                    self.celda.consultaContenidos(pos, self.image)
+                    #self.celda.prueba(self.image, pos)
             pygame.display.update() #or pygame.display.flip()
 if __name__ == "__main__":
     buscaMinas = Controlador()
