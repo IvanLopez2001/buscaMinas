@@ -3,7 +3,8 @@ from modelo.celda import Celda
 screen = pygame.display.set_mode((720, 500))
 clock = pygame.time.Clock()
 FPS = 60  # Frames per second.
-
+LEFT = 1
+RIGHT = 3
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (100, 0, 0)
@@ -30,9 +31,12 @@ class Controlador():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: 
                     quit()
-                if event.type == pygame.MOUSEBUTTONUP:
+                if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                     pos = pygame.mouse.get_pos()
                     self.celda.consultaContenidos(pos, self.image)
+                if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
+                    pos = pygame.mouse.get_pos()
+                    self.celda.mina(pos, self.image)
                     #self.celda.prueba(self.image, pos)
             pygame.display.update() #or pygame.display.flip()
 if __name__ == "__main__":
