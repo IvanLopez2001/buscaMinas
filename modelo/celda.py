@@ -1,5 +1,6 @@
 import pygame
 import random
+from modelo.juego import Juego
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (100, 0, 0)
@@ -9,13 +10,14 @@ screen = pygame.display.set_mode((720, 500))
 class Celda():
 
     def __init__(self):
+            self.juego = Juego()
             m = 0
             self.contenidos = {}
             self.minas = m
             self.ayuda = {}
             self.click = {}
             self.sospecha = {}
-            self.win = 138
+            self.win = 138    #minimo es 40 lo recomendado es 138
             self.win2 = 138
 
 
@@ -36,13 +38,14 @@ class Celda():
                 self.contenidos.setdefault(str([20*x, 20*(i+1)]), 0)
         while self.minas < self.win:
         #while self.minas < 50:
-                x = random.randint(1,35)*20
-                y = 20*random.randint(1,23)
+                x = random.randint(0,35)*20
+                y = random.randint(1,24)*20
                 if self.contenidos[str([x, y])] !=1:
                     self.contenidos[str([x, y])] = 1
                     self.consultaVecinas([x, y])
                     self.minas = self.minas + 1
         print(self.minas)
+
     def mina(self, pos, image):
         suma = 0
         x = pos[0]
@@ -73,7 +76,7 @@ class Celda():
             for x in range(36):
                 suma = suma + self.sospecha.get(str([20*x, 20*(i+1)]))
         if self.win == 0 and suma == self.win2:
-            quit()
+            self.juego.win()
             
 
     def cambiarColor(self, image, lugar):
@@ -84,20 +87,16 @@ class Celda():
             if self.ayuda.get(auxiliar) != 0:
                 image = pygame.Surface((19, 19))
                 image .fill(BLUE) 
-                #Aux . fill(BLUE)
                 self.click[auxiliar] = 1
                 screen.blit(image, lugar)
                 fontObj = pygame.font.Font('freesansbold.ttf', 19)
                 texto = fontObj.render(str(self.ayuda[auxiliar]), True, GREEN, BLUE)
-                textRectObj = texto.get_rect()
-                #textRectObj.center = (200, 150)
                 auxiliarPos = (lugar[0] + 3, lugar[1])
                 screen.blit(texto, auxiliarPos)
                 self.click[auxiliar] = 1
             else:
                 image = pygame.Surface((19, 19))
                 image .fill(BLUE) 
-                #Aux . fill(BLUE)
                 self.click[auxiliar] = 1
                 screen.blit(image, lugar)
     
@@ -116,7 +115,6 @@ class Celda():
                             if self.contenidos.get(auxiliarDiccionario) != 1:
                                 #if self.ayuda.get(auxiliarDiccionario) == 0:
                                 self.cambiarColor(image, listaAyuda)
-                                print(self.ayuda[auxiliarDiccionario])
                                 self.consultaContenidos(listaAyuda, image)
                 listaAyuda = []
                 listaAyuda = listaAyuda + pos
@@ -127,15 +125,15 @@ class Celda():
         auxX = x % 20
         auxY = y % 20
         lugar = [(x-auxX), (y-auxY)]
-        print (lugar)
         auxiliar =str(lugar)
+        print(auxiliar)
         if self.contenidos.get(auxiliar) == 0:
             self.cambiarColor(image, lugar)
             if self.ayuda[auxiliar] == 0:
                 self.clickAutomatico(lugar, image)
                 print(self.ayuda[auxiliar])
         if self.contenidos.get(auxiliar) == 1:
-            quit()
+            self.juego.lose()
     
     def consultaVecinas(self, pos):
         auxiliarAyuda = str(pos)

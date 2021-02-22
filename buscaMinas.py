@@ -1,5 +1,6 @@
 import pygame
 from modelo.celda import Celda
+from modelo.menu import Menu
 screen = pygame.display.set_mode((720, 500))
 clock = pygame.time.Clock()
 FPS = 60  # Frames per second.
@@ -14,15 +15,18 @@ class Controlador():
     rect = pygame.Rect((0, 20), (20, 20))
     image = pygame.Surface((19, 19))
     image .fill(BLACK)  
-    menu = pygame.Surface((720, 20))
-    menu .fill(RED)
+    detalles = pygame.Surface((720, 20))
+    detalles .fill(RED)
     def __init__(self):
         self.celda = Celda()
+        self.menu = Menu()
         self.printMapa()
+    def inicioJuego(self):
+        self.menu.inicio()
     def printMapa(self):
         screen.fill(WHITE)
         self.celda.printearCuadros(screen, self.image)
-        screen.blit(self.menu, [0,0])
+        screen.blit(self.detalles, [0,0])
         pygame.display.update() #or pygame.display.flip()
         self.mainLoop()
     def mainLoop(self):
