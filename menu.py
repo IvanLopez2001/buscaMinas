@@ -1,4 +1,6 @@
 import pygame
+from modelo.buscaMinas import Buscaminas
+from modelo.opciones import Opciones
 screen = pygame.display.set_mode((720, 500))
 clock = pygame.time.Clock()
 FPS = 60  # Frames per second.
@@ -15,8 +17,10 @@ BLUE1 = (0, 99, 120)
 class Menu():
     def __init__(self):
         self.image = pygame.image.load("imagen.jpg").convert()
-        self.boton = pygame.Surface((235, 35))
-        self.boton .fill(BLUE1) 
+        self.bInicio = pygame.Surface((235, 35))
+        self.bInicio .fill(BLUE1) 
+        self.bOpciones = pygame.Surface((235, 35))
+        self.bOpciones .fill(BLUE1) 
         pygame.font.init()
         self.inicio()
 
@@ -26,9 +30,12 @@ class Menu():
         screen.blit(self.image, (-200, -50))
         arial = pygame.font.SysFont("FrizQuadrata", 25)
         #fontObj = pygame.font.Font('freesansbold.ttf', 19)
-        texto = arial.render("JUGAR LIGA DE LAS MINAS", True, WHITE)
-        screen.blit(self.boton , self.boton.get_rect(center=(124,48)))
-        screen.blit(texto, (10,40))
+        textoInicio = arial.render("JUGAR LIGA DE LAS MINAS", True, WHITE)
+        textoOpciones = arial.render("OPCIONES", True, WHITE)
+        screen.blit(self.bInicio , self.bInicio.get_rect(center=(124,48)))
+        screen.blit(self.bOpciones , self.bInicio.get_rect(center=(124,88)))
+        screen.blit(textoOpciones, (10,80))
+        screen.blit(textoInicio, (10,40))
         self.mainLoop()
             
     def mainLoop(self):
@@ -39,10 +46,16 @@ class Menu():
                     quit()
                 if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                     pos = pygame.mouse.get_pos()
-                    startGame =  self.boton.get_rect(center=(120,50))
-
+                    startGame =  self.bInicio.get_rect(center=(124,48))
+                    opciones = self.bOpciones.get_rect(center=(124,88))
                     if startGame.collidepoint(pos):
-                        return
+                        Buscaminas()
+                        Menu()
+                    if opciones.collidepoint(pos):
+                        Opciones()
                 #if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
                     
             pygame.display.update() #or pygame.display.flip()
+
+if __name__ == "__main__":
+    menu = Menu()
