@@ -53,6 +53,7 @@ class Menu():
                         Menu()
                     if opciones.collidepoint(pos):
                         Opciones()
+                        Menu()
                 #if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
                     
             pygame.display.update() #or pygame.display.flip()

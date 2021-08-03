@@ -11,14 +11,15 @@ class Celda():
 
     def __init__(self):
             self.juego = Juego()
+            self.hongos = pygame.image.load("hongo.png").convert()
             m = 0
             self.contenidos = {}
             self.minas = m
             self.ayuda = {}
             self.click = {}
             self.sospecha = {}
-            self.win = 138    #minimo es 40 lo recomendado es 138
-            self.win2 = 138
+            self.win = 45  #minimo es 40 lo recomendado es 138
+            self.win2 = 45
 
 
     def printearCuadros(self, screen, image):
@@ -56,8 +57,7 @@ class Celda():
         auxiliar =str(lugar)
         if self.sospecha.get(auxiliar) == 0 and self.click.get(auxiliar) == 0:
             image = pygame.Surface((19, 19))
-            image .fill(RED) 
-            #Aux . fill(BLUE)
+            image .fill(RED)
             self.sospecha[auxiliar] = 1
             self.click[auxiliar] = 1
             screen.blit(image, lugar)
@@ -77,28 +77,42 @@ class Celda():
                 suma = suma + self.sospecha.get(str([20*x, 20*(i+1)]))
         if self.win == 0 and suma == self.win2:
             self.juego.win()
+            return True
             
 
     def cambiarColor(self, image, lugar):
-        
         pygame.font.init()
         auxiliar = str(lugar)
+        if self.click.get(auxiliar) == 1 and self.contenidos.get(str(lugar)) == 1:
+            #image = pygame.Surface((19, 19))
+            screen.blit(self.hongos, lugar)
+            #image .fill(RED) 
+            self.click[auxiliar] = 1
+            #screen.blit(image, lugar)
         if self.click.get(auxiliar) == 0:
-            if self.ayuda.get(auxiliar) != 0:
-                image = pygame.Surface((19, 19))
-                image .fill(BLUE) 
+            if self.contenidos.get(str(lugar)) == 1:
+                #image = pygame.Surface((19, 19))
+                screen.blit(self.hongos, lugar)
+                #image .fill(RED) 
                 self.click[auxiliar] = 1
-                screen.blit(image, lugar)
-                fontObj = pygame.font.Font('freesansbold.ttf', 19)
-                texto = fontObj.render(str(self.ayuda[auxiliar]), True, GREEN, BLUE)
-                auxiliarPos = (lugar[0] + 3, lugar[1])
-                screen.blit(texto, auxiliarPos)
-                self.click[auxiliar] = 1
+                #screen.blit(image, lugar)
             else:
-                image = pygame.Surface((19, 19))
-                image .fill(BLUE) 
-                self.click[auxiliar] = 1
-                screen.blit(image, lugar)
+                if self.ayuda.get(auxiliar) != 0:
+                    image = pygame.Surface((19, 19))
+                    image .fill(BLUE) 
+                    self.click[auxiliar] = 1
+                    screen.blit(image, lugar)
+                    fontObj = pygame.font.Font('freesansbold.ttf', 19)
+                    texto = fontObj.render(str(self.ayuda[auxiliar]), True, GREEN, BLUE)
+                    auxiliarPos = (lugar[0] + 3, lugar[1])
+                    screen.blit(texto, auxiliarPos)
+                    self.click[auxiliar] = 1
+                else:
+                    image = pygame.Surface((19, 19))
+                    image .fill(BLUE) 
+                    self.click[auxiliar] = 1
+                    screen.blit(image, lugar)
+
     
     def clickAutomatico(self, pos, image):
         #auxiliarAyuda = str(pos)
@@ -114,8 +128,9 @@ class Celda():
                         if self.click.get(auxiliarDiccionario) == 0:
                             if self.contenidos.get(auxiliarDiccionario) != 1:
                                 #if self.ayuda.get(auxiliarDiccionario) == 0:
-                                self.cambiarColor(image, listaAyuda)
                                 self.consultaContenidos(listaAyuda, image)
+                                self.cambiarColor(image, listaAyuda)
+                                #self.consultaContenidos(listaAyuda, image)
                 listaAyuda = []
                 listaAyuda = listaAyuda + pos
 
@@ -126,14 +141,22 @@ class Celda():
         auxY = y % 20
         lugar = [(x-auxX), (y-auxY)]
         auxiliar =str(lugar)
-        print(auxiliar)
-        if self.contenidos.get(auxiliar) == 0:
-            self.cambiarColor(image, lugar)
-            if self.ayuda[auxiliar] == 0:
-                self.clickAutomatico(lugar, image)
-                print(self.ayuda[auxiliar])
-        if self.contenidos.get(auxiliar) == 1:
-            self.juego.lose()
+        if self.click.get(auxiliar) == 0:
+            print(auxiliar)
+            if self.contenidos.get(auxiliar) == 0:
+                self.cambiarColor(image, lugar)
+                if self.ayuda[auxiliar] == 0:
+                    self.clickAutomatico(lugar, image)
+                    print(self.ayuda[auxiliar])
+            if self.contenidos.get(auxiliar) == 1:
+                for i in range(24):
+                    for x in range(36):
+                        if self.contenidos.get(str([20*x, 20*(i+1)])) == 1:
+                            lugar = [20*x,20*(i+1)]
+                            self.cambiarColor(image, lugar)
+                            pygame.display.update()
+                self.juego.lose()
+                return True
     
     def consultaVecinas(self, pos):
         auxiliarAyuda = str(pos)
@@ -169,8 +192,6 @@ class Celda():
                 #Aux . fill(BLUE)
                 if self.contenidos.get(auxiliar) == 0:
                     screen.blit(image, lugar)
-
-
 
 if __name__ == "__main__":
     celda = Celda()

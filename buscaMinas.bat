@@ -1,3 +1,1 @@
-buscaMinas.py
-
-pause
+menu.py

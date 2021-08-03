@@ -7,9 +7,11 @@ LEFT = 1
 RIGHT = 3
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-RED = (100, 0, 0)
+RED = (100, 30, 100)
 GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+BLUE1 = (0, 30, 100)
+BLUE = (0, 99, 120)
+
 class Buscaminas():
     rect = pygame.Rect((0, 20), (20, 20))
     image = pygame.Surface((19, 19))
@@ -18,25 +20,22 @@ class Buscaminas():
     detalles .fill(RED)
     def __init__(self):
         screen.fill(WHITE)
-        self.bBack = pygame.Surface((340, 40))
+        self.bBack = pygame.Surface((125, 40))
         self.bBack .fill(BLUE)
         self.celda = Celda()
         self.printMapa()
         self.printStats()
     def printStats(self):
-        arial = pygame.font.SysFont("FrizQuadrata", 25)
+        arial = pygame.font.SysFont("FrizQuadrata", 20)
         textoBack = arial.render("VOLVER AL MENU", True, WHITE)
-        screen.blit(self.bBack , self.bBack.get_rect(center=(0,0)))
-        screen.blit(textoBack, (10,2))
+        screen.blit(self.bBack , self.bBack.get_rect(center=(68,0)))
+        screen.blit(textoBack, (10,4))
         self.mainLoop()
 
     def printMapa(self):
         self.celda.printearCuadros(screen, self.image)
         screen.blit(self.detalles, [0,0])
         pygame.display.update() #or pygame.display.flip()
-    
-    def volverMenu(self):
-        return(1)
 
     def mainLoop(self):
         while True:
@@ -46,15 +45,22 @@ class Buscaminas():
                     quit()
                 if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                     pos = pygame.mouse.get_pos()
-                    backMenu =  self.bBack.get_rect(center=(0,0))
+                    backMenu =  self.bBack.get_rect(center=(68,0))
                     if backMenu.collidepoint(pos):
-                        self.volverMenu()
                         return(1)
                 if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                     pos = pygame.mouse.get_pos()
-                    self.celda.consultaContenidos(pos, self.image)
+                    derrota = self.celda.consultaContenidos(pos, self.image)
+                    if derrota == True:
+                        return(1)
+
                 if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
                     pos = pygame.mouse.get_pos()
-                    self.celda.mina(pos, self.image)
+                    victoria = self.celda.mina(pos, self.image)
+                    if victoria == True:
+                        return(1)
                     #self.celda.prueba(self.image, pos)
             pygame.display.update() #or pygame.display.flip()
+
+if __name__ == "__main__":
+    buscaMinas = Buscaminas()
