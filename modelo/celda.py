@@ -1,6 +1,7 @@
 import pygame
 import random
 from modelo.juego import Juego
+from io import open
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (100, 0, 0)
@@ -10,16 +11,24 @@ screen = pygame.display.set_mode((720, 500))
 class Celda():
 
     def __init__(self):
+            archivo = open("Minas.txt","r")
+            minas = int(archivo.read())
+            archivo.close()
             self.juego = Juego()
             self.hongos = pygame.image.load("hongo.png").convert()
+            self.pingueo = pygame.image.load("sospecha.png").convert()
             m = 0
             self.contenidos = {}
             self.minas = m
             self.ayuda = {}
             self.click = {}
             self.sospecha = {}
-            self.win = 45  #minimo es 40 lo recomendado es 138
-            self.win2 = 45
+            if minas > 45:
+                self.win = minas  #minimo es 40 lo recomendado es 138
+                self.win2 = minas
+            else:
+                self.win = 45  #minimo es 40 lo recomendado es 138
+                self.win2 = 45
 
 
     def printearCuadros(self, screen, image):
@@ -56,11 +65,12 @@ class Celda():
         lugar = [(x-auxX), (y-auxY)]
         auxiliar =str(lugar)
         if self.sospecha.get(auxiliar) == 0 and self.click.get(auxiliar) == 0:
-            image = pygame.Surface((19, 19))
-            image .fill(RED)
+            #image = pygame.Surface((19, 19))
+            #image .fill(RED)
             self.sospecha[auxiliar] = 1
             self.click[auxiliar] = 1
-            screen.blit(image, lugar)
+            #screen.blit(image, lugar)
+            screen.blit(self.pingueo, lugar)
             if self.contenidos.get(auxiliar) == 1:
                 self.win = self.win - 1
         elif self.sospecha.get(auxiliar) == 1:
@@ -91,11 +101,9 @@ class Celda():
             #screen.blit(image, lugar)
         if self.click.get(auxiliar) == 0:
             if self.contenidos.get(str(lugar)) == 1:
-                #image = pygame.Surface((19, 19))
                 screen.blit(self.hongos, lugar)
-                #image .fill(RED) 
                 self.click[auxiliar] = 1
-                #screen.blit(image, lugar)
+            
             else:
                 if self.ayuda.get(auxiliar) != 0:
                     image = pygame.Surface((19, 19))
